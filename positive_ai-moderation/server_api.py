@@ -1,59 +1,72 @@
-# server_api.py
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+import os
 
-from fastapi import FastAPI, Response
-from pydantic import BaseModel
 from moderation import moderate_content
 from positive_only import score_positivity
 
-app = FastAPI(title="PopBom AI Gate")
+load_dotenv()
+if not os.getenv("OPENAI_API_KEY"):
+    raise RuntimeError("OPENAI_API_KEY missing in .env")
 
-FEED = []  # pretend DB
+app = FastAPI(title="PopBom AI Content Guard")
 
-# --- simple routes so browser doesn't 404 ---
+# NEW: root + health
 @app.get("/")
-def home():
-    return {
-        "service": "PopBom AI Gate",
-        "status": "ok",
-        "docs": "/docs",
-        "endpoints": ["/api/upload (POST)", "/api/feed (GET)", "/health"]
-    }
+def root():
+    return {"service": "PopBom AI Content Guard", "docs": "/docs", "check": "/check"}
 
 @app.get("/health")
 def health():
-    return {"ok": True}
+    return {"status": "ok"}
 
-@app.get("/favicon.ico")
-def favicon():
-    return Response(status_code=204)
-# --------------------------------------------
+# ---- existing schema/routes (keep or paste if missing) ----
+POSITIVE_ONLY_THRESHOLD = 70
+REVIEW_RISK_THRESHOLD   = 0.4
+BLOCK_RISK_THRESHOLD    = 0.6
 
-class UploadIn(BaseModel):
-    caption: str
-    category: str = "general"
+class CheckPayload(BaseModel):
+    content_id: str
+    user_id: str
+    type: str = Field(..., pattern="^(post|comment)$")
+    text: str
     lang: str = "en"
     region: str = "global"
+    audience: str = "general"
+    positive_only: bool = False
 
-def should_publish(m, p):
-    return m["action"] == "allow" and p["passesPositiveOnly"]
+class CheckResult(BaseModel):
+    content_id: str
+    action: str
+    positivity: int
+    positive_only_pass: bool
+    safety: dict
+    rationale: str
 
-@app.post("/api/upload")
-def upload_post(d: UploadIn):
-    m = moderate_content(d.caption, lang=d.lang, region=d.region)
-    p = score_positivity(d.caption, category=d.category, lang=d.lang, region=d.region)
-    publish = should_publish(m, p)
+@app.post("/check", response_model=CheckResult)
+def check_content(payload: CheckPayload):
+    safety_json = moderate_content(payload.text, payload.lang, payload.region)
+    risk = float(safety_json.get("overallRisk", 0.0))
+    safety_action = safety_json.get("action", "allow")
+    if risk >= BLOCK_RISK_THRESHOLD:
+        safety_action = "block"
+    elif risk >= REVIEW_RISK_THRESHOLD and safety_action != "block":
+        safety_action = "review"
 
-    item = {
-        "id": len(FEED) + 1,
-        "caption": d.caption,
-        "moderation": m,
-        "positivity": p,
-        "status": "published" if publish else ("review" if m["action"] == "review" else "blocked"),
-    }
-    if publish:
-        FEED.append(item)
-    return item
+    positivity_json = score_positivity(payload.text, payload.lang, payload.region, payload.audience)
+    positivity = int(positivity_json.get("positivity", 0))
+    positive_only_pass = positivity >= POSITIVE_ONLY_THRESHOLD
 
-@app.get("/api/feed")
-def get_feed():
-    return [x for x in FEED if x["status"] == "published"]
+    final_action = safety_action
+    if final_action == "allow" and payload.positive_only and not positive_only_pass:
+        final_action = "review"
+
+    return CheckResult(
+        content_id=payload.content_id,
+        action=final_action,
+        positivity=positivity,
+        positive_only_pass=positive_only_pass,
+        safety=safety_json,
+        rationale=safety_json.get("rationale","") or positivity_json.get("rationale","")
+    )
