@@ -76,7 +76,7 @@ python main.py
 The terminal will display:
 
 ```
-PopBom SafeFilter: AI Moderation & Positive Content Scoring
+Social Media Safe Filter: AI Moderation & Positive Content Scoring
 Type 'quit' to exit.
 
 Enter content to check:
@@ -142,6 +142,6 @@ Contributions are welcome! To contribute:
 
 ---
 
-## 🌟 Why PopBom SafeFilter?
+## 🌟 Why Social Media Safe Filter?
 
-PopBom SafeFilter is a lightweight, developer-friendly Python toolkit designed for social media platforms. It ensures content safety and promotes positive user experiences through AI-powered moderation and positivity scoring. As part of the PopBom ecosystem, it’s ideal for platforms requiring robust, scalable content filtering using GPT models.
+Social Media Safe Filter is a lightweight, developer-friendly Python toolkit designed for social media platforms. It ensures content safety and promotes positive user experiences through AI-powered moderation and positivity scoring. As part of the PopBom ecosystem, it’s ideal for platforms requiring robust, scalable content filtering using GPT models.
