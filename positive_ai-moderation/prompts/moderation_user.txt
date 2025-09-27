@@ -1,0 +1,6 @@
+Classify the following text and short context.
+
+text: {{text}}
+lang: {{lang}}
+userAge: {{age}}
+region: {{region}}

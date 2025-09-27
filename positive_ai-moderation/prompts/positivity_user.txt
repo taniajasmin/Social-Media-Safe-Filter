@@ -1,0 +1,6 @@
+Score positivity for:
+
+text: {{text}}
+category: {{category}}
+lang: {{lang}}
+region: {{region}}
