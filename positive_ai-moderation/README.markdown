@@ -1,7 +1,7 @@
-# PopBom SafeFilter
+# Social Media Safe Filter
 
 An open-source **AI Moderation & Positive Content Scoring Engine** built in Python.  
-**PopBom SafeFilter** powers content moderation and positivity scoring for the PopBom social media platform, enabling developers to test and filter text content directly from the terminal using the GPT API. This module ensures safe, brand-friendly content while supporting a positive user experience.
+**Social Media Safe Filter** powers content moderation and positivity scoring for the PopBom social media platform, enabling developers to test and filter text content directly from the terminal using the GPT API. This module ensures safe, brand-friendly content while supporting a positive user experience.
 
 ---
 
@@ -27,17 +27,17 @@ An open-source **AI Moderation & Positive Content Scoring Engine** built in Pyth
 
 ```
 popbom_safefilter/
-├── .env                    # Environment variables (e.g., API key)
-├── requirements.txt        # Project dependencies
-├── main.py                # Entry point for interactive mode
-├── moderation.py          # Moderation logic
-├── positive_only.py       # Positivity scoring logic
-├── prompts/               # Prompt templates
+├── .env                       # Environment variables (e.g., API key)
+├── requirements.txt           # Project dependencies
+├── main.py                    # Entry point for interactive mode
+├── moderation.py              # Moderation logic
+├── positive_only.py           # Positivity scoring logic
+├── prompts/                   # Prompt templates
 │   ├── moderation_system.txt  # Moderation classification rules
 │   ├── moderation_user.txt    # User input template for moderation
 │   ├── positivity_system.txt  # Positivity scoring rubric
 │   └── positivity_user.txt    # User input template for positivity
-└── utils.py               # Utility functions
+└── utils.py                   # Utility functions
 ```
 
 ---
@@ -49,7 +49,7 @@ Follow these steps to set up and run PopBom SafeFilter locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/popbom-safefilter.git
+git clone https://github.com/taniajasmin/social-media-safe-filter.git
 cd popbom-safefilter
 ```
 
@@ -139,8 +139,6 @@ Contributions are welcome! To contribute:
 3. Commit your changes (`git commit -m "Add your feature"`).
 4. Push to the branch (`git push origin feature/your-feature`).
 5. Open a pull request with detailed test cases.
-
-Please report issues or suggest features via the [GitHub Issues](https://github.com/yourusername/popbom-safefilter/issues) page.
 
 ---
 
