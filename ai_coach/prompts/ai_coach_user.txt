@@ -1,0 +1,7 @@
+User content:
+{{content}}
+
+Current metrics:
+likes={{likes}}, replays={{replays}}, shares={{shares}}, followers={{followers}}
+
+Goal: increase virality and engagement. Return only JSON.
